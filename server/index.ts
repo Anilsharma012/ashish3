@@ -642,12 +642,18 @@ export function createServer() {
         // Seed Area Maps defaults as well (idempotent)
         try {
           const mapsModule = await import("./routes/maps");
-          if (mapsModule && typeof mapsModule.seedDefaultAreaMaps === "function") {
+          if (
+            mapsModule &&
+            typeof mapsModule.seedDefaultAreaMaps === "function"
+          ) {
             const out = await mapsModule.seedDefaultAreaMaps();
             console.log("🗺️ seedDefaultAreaMaps:", out);
           }
         } catch (merr) {
-          console.warn("⚠️ seedDefaultAreaMaps skipped:", (merr as any)?.message || merr);
+          console.warn(
+            "⚠️ seedDefaultAreaMaps skipped:",
+            (merr as any)?.message || merr,
+          );
         }
       } catch (e: any) {
         console.warn("⚠️ seedDefaultData failed:", e?.message || e);
@@ -2243,7 +2249,10 @@ export function createServer() {
 
   // Area Maps - Public
   app.get("/api/maps", getPublicAreaMaps);
-  app.post("/api/maps/init", (await import("./routes/maps")).initializeAreaMaps);
+  app.post(
+    "/api/maps/init",
+    (await import("./routes/maps")).initializeAreaMaps,
+  );
 
   // Admin routes for projects
   app.get(

@@ -9,7 +9,8 @@ import path from "path";
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = path.join(process.cwd(), "uploads", "maps");
-    if (!fs.existsSync(uploadPath)) fs.mkdirSync(uploadPath, { recursive: true });
+    if (!fs.existsSync(uploadPath))
+      fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
@@ -72,9 +73,18 @@ export const getAllAreaMaps: RequestHandler = async (_req, res) => {
 export const createAreaMap: RequestHandler = async (req, res) => {
   try {
     const db = getDatabase();
-    const { title = "", area = "", description = "", imageUrl = "", isActive = true, sortOrder = 0 } = req.body || {};
+    const {
+      title = "",
+      area = "",
+      description = "",
+      imageUrl = "",
+      isActive = true,
+      sortOrder = 0,
+    } = req.body || {};
     if (!imageUrl || typeof imageUrl !== "string") {
-      return res.status(400).json({ success: false, error: "imageUrl required" });
+      return res
+        .status(400)
+        .json({ success: false, error: "imageUrl required" });
     }
     const now = new Date();
     const doc: AreaMapItem = {
@@ -102,13 +112,16 @@ export const updateAreaMap: RequestHandler = async (req, res) => {
   try {
     const db = getDatabase();
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) return res.status(400).json({ success: false, error: "Invalid ID" });
+    if (!ObjectId.isValid(id))
+      return res.status(400).json({ success: false, error: "Invalid ID" });
 
-    const { title, area, description, imageUrl, isActive, sortOrder } = req.body || {};
+    const { title, area, description, imageUrl, isActive, sortOrder } =
+      req.body || {};
     const update: any = { updatedAt: new Date() };
     if (title !== undefined) update.title = String(title).trim();
     if (area !== undefined) update.area = String(area).trim();
-    if (description !== undefined) update.description = String(description).trim();
+    if (description !== undefined)
+      update.description = String(description).trim();
     if (imageUrl !== undefined) update.imageUrl = String(imageUrl).trim();
     if (isActive !== undefined) update.isActive = Boolean(isActive);
     if (sortOrder !== undefined) update.sortOrder = Number(sortOrder) || 0;
@@ -116,7 +129,8 @@ export const updateAreaMap: RequestHandler = async (req, res) => {
     const result = await db
       .collection("area_maps")
       .updateOne({ _id: new ObjectId(id) }, { $set: update });
-    if (!result.matchedCount) return res.status(404).json({ success: false, error: "Not found" });
+    if (!result.matchedCount)
+      return res.status(404).json({ success: false, error: "Not found" });
 
     const updated = await db
       .collection("area_maps")
@@ -132,11 +146,13 @@ export const deleteAreaMap: RequestHandler = async (req, res) => {
   try {
     const db = getDatabase();
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) return res.status(400).json({ success: false, error: "Invalid ID" });
+    if (!ObjectId.isValid(id))
+      return res.status(400).json({ success: false, error: "Invalid ID" });
     const result = await db
       .collection("area_maps")
       .deleteOne({ _id: new ObjectId(id) });
-    if (!result.deletedCount) return res.status(404).json({ success: false, error: "Not found" });
+    if (!result.deletedCount)
+      return res.status(404).json({ success: false, error: "Not found" });
     res.json({ success: true, data: { message: "Deleted" } });
   } catch (e: any) {
     res.status(500).json({ success: false, error: e.message });
@@ -146,7 +162,8 @@ export const deleteAreaMap: RequestHandler = async (req, res) => {
 // Admin: POST /api/admin/maps/upload (multipart form, field: image)
 export const handleMapImageUpload: RequestHandler = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ success: false, error: "No image file" });
+    if (!req.file)
+      return res.status(400).json({ success: false, error: "No image file" });
     const url = `/uploads/maps/${req.file.filename}`;
     res.json({ success: true, data: { imageUrl: url } });
   } catch (e: any) {
@@ -165,7 +182,8 @@ export async function seedDefaultAreaMaps() {
       title: "Rohtak City Overview",
       area: "Rohtak",
       description: "Key sectors and landmarks",
-      imageUrl: "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?w=1200&h=800&fit=crop",
+      imageUrl:
+        "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?w=1200&h=800&fit=crop",
       isActive: true,
       sortOrder: 1,
       createdAt: now,
@@ -175,7 +193,8 @@ export async function seedDefaultAreaMaps() {
       title: "Sector 1 Map",
       area: "Sector 1",
       description: "Residential blocks and parks",
-      imageUrl: "https://images.unsplash.com/photo-1504610926078-a1611febcad3?w=1200&h=800&fit=crop",
+      imageUrl:
+        "https://images.unsplash.com/photo-1504610926078-a1611febcad3?w=1200&h=800&fit=crop",
       isActive: true,
       sortOrder: 2,
       createdAt: now,
@@ -185,7 +204,8 @@ export async function seedDefaultAreaMaps() {
       title: "Sector 2 Map",
       area: "Sector 2",
       description: "Schools and amenities",
-      imageUrl: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?w=1200&h=800&fit=crop",
+      imageUrl:
+        "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?w=1200&h=800&fit=crop",
       isActive: true,
       sortOrder: 3,
       createdAt: now,

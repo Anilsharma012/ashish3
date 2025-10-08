@@ -80,7 +80,7 @@ const ROUTE_OVERRIDES: Record<string, string> = {
 
   // examples
   "other-services": "/other-services/other-services",
-  "commercial": "/commercial",
+  commercial: "/commercial",
 };
 
 /* ---------- Component ---------- */
@@ -126,8 +126,11 @@ function OLXStyleCategories() {
           apiRes.json.data.length
         ) {
           let list = apiRes.json.data.slice(0, 10);
-          const hasMaps = list.some((c: any) => norm(c.slug) === "maps" || norm(c.name) === "maps");
-          if (!hasMaps) list = [{ name: "Maps", slug: "maps" }, ...list].slice(0, 10);
+          const hasMaps = list.some(
+            (c: any) => norm(c.slug) === "maps" || norm(c.name) === "maps",
+          );
+          if (!hasMaps)
+            list = [{ name: "Maps", slug: "maps" }, ...list].slice(0, 10);
           setCategories(list);
         }
       } catch {
@@ -155,8 +158,7 @@ function OLXStyleCategories() {
     }
 
     // 3) Fallback generic category page
-    const finalSlug =
-      norm(category.slug) || norm(category.name) || "category";
+    const finalSlug = norm(category.slug) || norm(category.name) || "category";
     navigate(`/categories/${finalSlug}`);
   };
 
@@ -216,8 +218,7 @@ function OLXStyleCategories() {
           {(categories || []).slice(0, 10).map((category, index) => {
             if (!category?.name) return null;
 
-            const IconComponent =
-              categoryIcons[category.name] || Building2;
+            const IconComponent = categoryIcons[category.name] || Building2;
             const isActive = activeCat?.slug === category.slug;
 
             return (
@@ -261,7 +262,7 @@ function OLXStyleCategories() {
                 className="text-sm text-[#C70000] hover:underline"
                 onClick={() =>
                   navigate(
-                    `/categories/${norm(activeCat.slug) || norm(activeCat.name)}`
+                    `/categories/${norm(activeCat.slug) || norm(activeCat.name)}`,
                   )
                 }
               >
@@ -282,7 +283,7 @@ function OLXStyleCategories() {
                       navigate(
                         `/categories/${
                           norm(activeCat.slug) || norm(activeCat.name)
-                        }/${norm(sub.slug) || norm(sub.name)}`
+                        }/${norm(sub.slug) || norm(sub.name)}`,
                       )
                     }
                     className="text-left group border border-gray-200 rounded-md p-3 hover:border-red-300 hover:shadow-sm transition"
