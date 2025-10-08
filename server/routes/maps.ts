@@ -153,3 +153,55 @@ export const handleMapImageUpload: RequestHandler = async (req, res) => {
     res.status(500).json({ success: false, error: e.message });
   }
 };
+
+// Seed defaults programmatically (idempotent)
+export async function seedDefaultAreaMaps() {
+  const db = getDatabase();
+  const count = await db.collection("area_maps").countDocuments();
+  if (count > 0) return { seeded: false, existing: count };
+  const now = new Date();
+  const docs: AreaMapItem[] = [
+    {
+      title: "Rohtak City Overview",
+      area: "Rohtak",
+      description: "Key sectors and landmarks",
+      imageUrl: "https://images.unsplash.com/photo-1505764706515-aa95265c5abc?w=1200&h=800&fit=crop",
+      isActive: true,
+      sortOrder: 1,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      title: "Sector 1 Map",
+      area: "Sector 1",
+      description: "Residential blocks and parks",
+      imageUrl: "https://images.unsplash.com/photo-1504610926078-a1611febcad3?w=1200&h=800&fit=crop",
+      isActive: true,
+      sortOrder: 2,
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      title: "Sector 2 Map",
+      area: "Sector 2",
+      description: "Schools and amenities",
+      imageUrl: "https://images.unsplash.com/photo-1528909514045-2fa4ac7a08ba?w=1200&h=800&fit=crop",
+      isActive: true,
+      sortOrder: 3,
+      createdAt: now,
+      updatedAt: now,
+    },
+  ];
+  const result = await db.collection("area_maps").insertMany(docs as any);
+  return { seeded: true, inserted: result.insertedCount };
+}
+
+// Public init endpoint handler
+export const initializeAreaMaps: RequestHandler = async (_req, res) => {
+  try {
+    const out = await seedDefaultAreaMaps();
+    res.json({ success: true, data: out });
+  } catch (e: any) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+};
