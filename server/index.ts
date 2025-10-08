@@ -3,6 +3,8 @@ import cors from "cors";
 import "dotenv/config";
 
 import { connectToDatabase, getDatabase } from "./db/mongodb";
+import path from "path";
+import express from "express";
 import {
   authenticateToken,
   requireAdmin,
@@ -637,6 +639,16 @@ export function createServer() {
           const seedResult = await initModule.seedDefaultData();
           console.log("🔧 seedDefaultData result:", seedResult);
         }
+        // Seed Area Maps defaults as well (idempotent)
+        try {
+          const mapsModule = await import("./routes/maps");
+          if (mapsModule && typeof mapsModule.seedDefaultAreaMaps === "function") {
+            const out = await mapsModule.seedDefaultAreaMaps();
+            console.log("🗺️ seedDefaultAreaMaps:", out);
+          }
+        } catch (merr) {
+          console.warn("⚠️ seedDefaultAreaMaps skipped:", (merr as any)?.message || merr);
+        }
       } catch (e: any) {
         console.warn("⚠️ seedDefaultData failed:", e?.message || e);
       }
@@ -645,6 +657,9 @@ export function createServer() {
       console.error("�� MongoDB connection failed:", error);
       console.log("Server will continue with limited functionality");
     });
+
+  // Serve uploaded files (maps, properties, etc.)
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
   // Health check with database status and CORS info
   app.get("/api/ping", async (req, res) => {
