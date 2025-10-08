@@ -189,6 +189,7 @@ const menuItems: MenuItem[] = [
     children: [
       { id: "slider", label: "Slider", icon: Sliders },
       { id: "new-projects", label: "New Projects", icon: Plus },
+      { id: "maps", label: "Area Maps", icon: MapPin },
       { id: "banners", label: "Banners", icon: Megaphone },
       { id: "feature-section", label: "Feature Section", icon: Star },
     ],
