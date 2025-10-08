@@ -189,6 +189,7 @@ const menuItems: MenuItem[] = [
     children: [
       { id: "slider", label: "Slider", icon: Sliders },
       { id: "new-projects", label: "New Projects", icon: Plus },
+      { id: "maps", label: "Area Maps", icon: MapPin },
       { id: "banners", label: "Banners", icon: Megaphone },
       { id: "feature-section", label: "Feature Section", icon: Star },
     ],
@@ -310,8 +311,14 @@ export default function AdminLayout({
     const isExpanded = expandedSections.includes(item.id);
     const isActive = activeSection === item.id;
 
-    const isRouteLink = level > 0 && (item.id === "categories" || item.id === "countries");
-    const href = item.id === "categories" ? "/admin/ads/categories" : item.id === "countries" ? "/admin/locations/countries" : undefined;
+    const isRouteLink =
+      level > 0 && (item.id === "categories" || item.id === "countries");
+    const href =
+      item.id === "categories"
+        ? "/admin/ads/categories"
+        : item.id === "countries"
+          ? "/admin/locations/countries"
+          : undefined;
 
     return (
       <div key={item.id}>

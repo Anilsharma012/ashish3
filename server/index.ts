@@ -3,6 +3,8 @@ import cors from "cors";
 import "dotenv/config";
 
 import { connectToDatabase, getDatabase } from "./db/mongodb";
+import path from "path";
+import express from "express";
 import {
   authenticateToken,
   requireAdmin,
@@ -244,6 +246,17 @@ import {
   getPublicNewProjectBanners,
   initializeNewProjects,
 } from "./routes/new-projects";
+
+// Area Maps routes
+import {
+  getPublicAreaMaps,
+  getAllAreaMaps,
+  createAreaMap,
+  updateAreaMap,
+  deleteAreaMap,
+  uploadMapImage,
+  handleMapImageUpload,
+} from "./routes/maps";
 
 // Analytics routes
 import {
@@ -626,6 +639,22 @@ export function createServer() {
           const seedResult = await initModule.seedDefaultData();
           console.log("🔧 seedDefaultData result:", seedResult);
         }
+        // Seed Area Maps defaults as well (idempotent)
+        try {
+          const mapsModule = await import("./routes/maps");
+          if (
+            mapsModule &&
+            typeof mapsModule.seedDefaultAreaMaps === "function"
+          ) {
+            const out = await mapsModule.seedDefaultAreaMaps();
+            console.log("🗺️ seedDefaultAreaMaps:", out);
+          }
+        } catch (merr) {
+          console.warn(
+            "⚠️ seedDefaultAreaMaps skipped:",
+            (merr as any)?.message || merr,
+          );
+        }
       } catch (e: any) {
         console.warn("⚠️ seedDefaultData failed:", e?.message || e);
       }
@@ -634,6 +663,9 @@ export function createServer() {
       console.error("�� MongoDB connection failed:", error);
       console.log("Server will continue with limited functionality");
     });
+
+  // Serve uploaded files (maps, properties, etc.)
+  app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
   // Health check with database status and CORS info
   app.get("/api/ping", async (req, res) => {
@@ -2215,6 +2247,13 @@ export function createServer() {
   app.get("/api/new-projects", getPublicNewProjects); // Public endpoint for active projects
   app.get("/api/new-projects/banners", getPublicNewProjectBanners); // Public banners
 
+  // Area Maps - Public
+  app.get("/api/maps", getPublicAreaMaps);
+  app.post(
+    "/api/maps/init",
+    (await import("./routes/maps")).initializeAreaMaps,
+  );
+
   // Admin routes for projects
   app.get(
     "/api/admin/new-projects",
@@ -2247,6 +2286,29 @@ export function createServer() {
     authenticateToken,
     requireAdmin,
     getNewProjectBanners,
+  );
+
+  // Area Maps - Admin
+  app.get("/api/admin/maps", authenticateToken, requireAdmin, getAllAreaMaps);
+  app.post("/api/admin/maps", authenticateToken, requireAdmin, createAreaMap);
+  app.put(
+    "/api/admin/maps/:id",
+    authenticateToken,
+    requireAdmin,
+    updateAreaMap,
+  );
+  app.delete(
+    "/api/admin/maps/:id",
+    authenticateToken,
+    requireAdmin,
+    deleteAreaMap,
+  );
+  app.post(
+    "/api/admin/maps/upload",
+    authenticateToken,
+    requireAdmin,
+    uploadMapImage,
+    handleMapImageUpload,
   );
   app.post(
     "/api/admin/new-projects/banners",
