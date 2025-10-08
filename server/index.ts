@@ -2243,6 +2243,7 @@ export function createServer() {
 
   // Area Maps - Public
   app.get("/api/maps", getPublicAreaMaps);
+  app.post("/api/maps/init", (await import("./routes/maps")).initializeAreaMaps);
 
   // Admin routes for projects
   app.get(
