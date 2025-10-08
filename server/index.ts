@@ -245,6 +245,17 @@ import {
   initializeNewProjects,
 } from "./routes/new-projects";
 
+// Area Maps routes
+import {
+  getPublicAreaMaps,
+  getAllAreaMaps,
+  createAreaMap,
+  updateAreaMap,
+  deleteAreaMap,
+  uploadMapImage,
+  handleMapImageUpload,
+} from "./routes/maps";
+
 // Analytics routes
 import {
   trackPropertyView,
@@ -2215,6 +2226,9 @@ export function createServer() {
   app.get("/api/new-projects", getPublicNewProjects); // Public endpoint for active projects
   app.get("/api/new-projects/banners", getPublicNewProjectBanners); // Public banners
 
+  // Area Maps - Public
+  app.get("/api/maps", getPublicAreaMaps);
+
   // Admin routes for projects
   app.get(
     "/api/admin/new-projects",
@@ -2247,6 +2261,29 @@ export function createServer() {
     authenticateToken,
     requireAdmin,
     getNewProjectBanners,
+  );
+
+  // Area Maps - Admin
+  app.get("/api/admin/maps", authenticateToken, requireAdmin, getAllAreaMaps);
+  app.post("/api/admin/maps", authenticateToken, requireAdmin, createAreaMap);
+  app.put(
+    "/api/admin/maps/:id",
+    authenticateToken,
+    requireAdmin,
+    updateAreaMap,
+  );
+  app.delete(
+    "/api/admin/maps/:id",
+    authenticateToken,
+    requireAdmin,
+    deleteAreaMap,
+  );
+  app.post(
+    "/api/admin/maps/upload",
+    authenticateToken,
+    requireAdmin,
+    uploadMapImage,
+    handleMapImageUpload,
   );
   app.post(
     "/api/admin/new-projects/banners",
