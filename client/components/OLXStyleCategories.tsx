@@ -68,6 +68,7 @@ const isMatch = (cat: Category, ...candidates: string[]) => {
 const ROUTE_OVERRIDES: Record<string, string> = {
   // exact landing you wanted:
   "new-projects": "/new-projects",
+  maps: "/maps",
 
   // common property flows (edit as per your app)
   buy: "/buy",
