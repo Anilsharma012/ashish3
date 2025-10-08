@@ -57,6 +57,7 @@ import HomepageSliderManagement from "../components/admin/HomepageSliderManageme
 import StaffManagement from "../components/admin/StaffManagement";
 import AdminBanners from "../components/AdminBanners";
 import NewProjectsManagement from "../components/admin/NewProjectsManagement";
+import MapsManagement from "../components/admin/MapsManagement";
 
 import PropertyImageManager from "../components/admin/PropertyImageManager";
 import PaymentTransactions from "../components/admin/PaymentTransactions";
@@ -1146,6 +1147,8 @@ export default function Admin() {
           return <HomepageSliderManagement />;
         case "new-projects":
           return <NewProjectsManagement />;
+        case "maps":
+          return <MapsManagement />;
         case "banners":
           return <AdminBanners token={token} />;
         case "feature-section":
