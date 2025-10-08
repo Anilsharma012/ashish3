@@ -100,6 +100,7 @@ function OLXStyleCategories() {
     { name: "Other Services", slug: "other-services" },
     { name: "Rent", slug: "rent" },
     { name: "New Projects", slug: "new-projects" },
+    { name: "Maps", slug: "maps" },
     { name: "Commercial Properties", slug: "commercial" },
     { name: "Cars", slug: "cars" },
     { name: "Mobiles", slug: "mobiles" },
@@ -115,7 +116,6 @@ function OLXStyleCategories() {
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000);
-        // If you have a global API helper:
         const apiRes = await (window as any).api?.("/categories?active=true");
         clearTimeout(timeout);
 
@@ -125,7 +125,10 @@ function OLXStyleCategories() {
           Array.isArray(apiRes.json.data) &&
           apiRes.json.data.length
         ) {
-          setCategories(apiRes.json.data.slice(0, 10));
+          let list = apiRes.json.data.slice(0, 10);
+          const hasMaps = list.some((c: any) => norm(c.slug) === "maps" || norm(c.name) === "maps");
+          if (!hasMaps) list = [{ name: "Maps", slug: "maps" }, ...list].slice(0, 10);
+          setCategories(list);
         }
       } catch {
         // keep defaults
